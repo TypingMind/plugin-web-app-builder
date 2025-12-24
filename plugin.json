@@ -2,6 +2,7 @@
     "id": "render_web_app",
     "uuid": "af76c947-6deb-435e-8338-a712c8b36eb0",
     "emoji": "🔨",
+    "iconURL": "https://raw.githubusercontent.com/TypingMind/plugin-web-app-builder/refs/heads/main/icon.svg",
     "title": "Web App Builder",
     "openaiSpec": {
       "name": "render_web_app",
