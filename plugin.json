@@ -1,0 +1,24 @@
+  {
+    "id": "render_web_app",
+    "uuid": "af76c947-6deb-435e-8338-a712c8b36eb0",
+    "emoji": "🔨",
+    "title": "Web App Builder",
+    "openaiSpec": {
+      "name": "render_web_app",
+      "parameters": {
+        "type": "object",
+        "required": [
+          "htmlSource"
+        ],
+        "properties": {
+          "htmlSource": {
+            "type": "string",
+            "description": "The HTML source to render to the canvas."
+          }
+        }
+      },
+      "description": "Render an interactive web app with HTML/CSS/JS source to the user interface. The HTML source can include JavaScript and CSS to create interactive elements. This can be used to create custom user interfaces, games, demos, charts, simple web apps, and more. Use this plugin when the user ask to create a web app, a interactive demo, a game, or some other types of interactive content."
+    },
+    "implementationType": "javascript",
+    "outputType": "render_html",
+  },
