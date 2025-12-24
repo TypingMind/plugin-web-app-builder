@@ -21,5 +21,5 @@
       "description": "Render an interactive web app with HTML/CSS/JS source to the user interface. The HTML source can include JavaScript and CSS to create interactive elements. This can be used to create custom user interfaces, games, demos, charts, simple web apps, and more. Use this plugin when the user ask to create a web app, a interactive demo, a game, or some other types of interactive content."
     },
     "implementationType": "javascript",
-    "outputType": "render_html",
-  },
+    "outputType": "render_html"
+  }
