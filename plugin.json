@@ -14,12 +14,13 @@
         "properties": {
           "htmlSource": {
             "type": "string",
-            "description": "The HTML source to render to the canvas."
+            "description": "The full HTML source to render to the canvas. Must be a complete document (e.g. starting with <!DOCTYPE html> or <html>). After this initial render, prefer the `update_web_app` tool to make small edits — it is much faster and uses far fewer tokens than re-emitting the entire HTML."
           }
         }
       },
-      "description": "Render an interactive web app with HTML/CSS/JS source to the user interface. The HTML source can include JavaScript and CSS to create interactive elements. This can be used to create custom user interfaces, games, demos, charts, simple web apps, and more. Use this plugin when the user ask to create a web app, a interactive demo, a game, or some other types of interactive content."
+      "description": "Render an interactive web app with HTML/CSS/JS source to the user interface. The HTML source can include JavaScript and CSS to create interactive elements. This can be used to create custom user interfaces, games, demos, charts, simple web apps, and more. Use this plugin when the user asks to create a web app, an interactive demo, a game, or some other types of interactive content. Use this for the FIRST render and for full rewrites. For small follow-up tweaks to a web app you have already rendered, prefer `update_web_app`."
     },
     "implementationType": "javascript",
-    "outputType": "render_html"
+    "outputType": "render_html",
+    "overviewMarkdown": "## Web App Builder\n\nBuild simple web apps with HTML/CSS/JS (frontend only). Preview and code included.\n\nExample usage:\n\n> Create an interactive quiz with this document: ...\n\n> Build a simple calculator app\n\n> Create a tictactoe game with blue theme\n",
   }
