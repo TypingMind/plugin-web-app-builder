@@ -21,5 +21,48 @@
     "description": "Render an interactive web app with HTML/CSS/JS source to the user interface. The HTML source can include JavaScript and CSS to create interactive elements. This can be used to create custom user interfaces, games, demos, charts, simple web apps, and more. Use this plugin when the user asks to create a web app, an interactive demo, a game, or some other types of interactive content. Use this for the FIRST render and for full rewrites. For small follow-up tweaks to a web app you have already rendered, prefer `update_web_app`."
   },
   "implementationType": "javascript",
-  "outputType": "render_html"
+  "outputType": "render_html",
+  "pluginFunctions": [
+    {
+      "id": "5c5d0c9b-4d6a-4d72-9c05-7c1f3a3a4f01",
+      "name": "Update Web App",
+      "implementationType": "javascript",
+      "outputType": "render_html",
+      "openaiSpec": {
+        "name": "update_web_app",
+        "parameters": {
+          "type": "object",
+          "required": [
+            "edits"
+          ],
+          "properties": {
+            "edits": {
+              "type": "array",
+              "minItems": 1,
+              "description": "An ordered list of search-and-replace edits to apply to the most recently rendered web app HTML. Edits are applied sequentially: each edit operates on the result of the previous one. Each `oldText` must appear EXACTLY ONCE in the current HTML — include enough surrounding context (whitespace and neighbouring tags) to make the match unique. To insert new content, set `oldText` to a unique anchor that already exists and put both that anchor and the new content into `newText`. To delete content, set `newText` to an empty string.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "oldText",
+                  "newText"
+                ],
+                "properties": {
+                  "oldText": {
+                    "type": "string",
+                    "description": "The exact substring to find in the current HTML. Whitespace, casing and punctuation must match byte-for-byte. Must occur exactly once in the current HTML."
+                  },
+                  "newText": {
+                    "type": "string",
+                    "description": "The replacement text. Use an empty string to delete the matched region."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Apply small, targeted edits to the most recently rendered web app instead of re-emitting the full HTML. Each edit performs an exact, literal find-and-replace on the current HTML. Use this WHENEVER you only need to tweak parts of an existing web app you previously rendered with `render_web_app` — it is much faster and uses far fewer output tokens than re-emitting the entire HTML.\n\nRules:\n- Do NOT use this for the very first render — use `render_web_app` instead.\n- Each `oldText` must match EXACTLY ONCE in the current HTML; include enough surrounding context to make it unique. If a match is ambiguous (matches more than once) or missing, the call will fail and you should retry with more context, or fall back to `render_web_app` with the full updated HTML.\n- Edits are applied in order; later edits see the result of earlier ones.\n- Prefer many small edits over one big rewrite — it makes failures localised and easier to retry."
+      },
+      "code": "async function update_web_app(params, userSettings, authorizedResources) {\n  var previous =\n    (authorizedResources && authorizedResources.previousRunOutput) || '';\n\n  if (typeof previous !== 'string' || !previous.length) {\n    throw new Error(\n      'No previously rendered web app found to patch. Call `render_web_app` first to render the initial HTML, then use `update_web_app` for follow-up edits.',\n    );\n  }\n\n  var edits = params && params.edits;\n  if (!Array.isArray(edits) || edits.length === 0) {\n    throw new Error(\n      '`edits` must be a non-empty array of {oldText, newText} objects.',\n    );\n  }\n\n  var html = previous;\n  for (var i = 0; i < edits.length; i++) {\n    var edit = edits[i] || {};\n    var oldText = edit.oldText;\n    var newText = edit.newText;\n\n    if (typeof oldText !== 'string' || typeof newText !== 'string') {\n      throw new Error(\n        'Edit #' +\n          (i + 1) +\n          ' must have string `oldText` and `newText` properties.',\n      );\n    }\n    if (!oldText.length) {\n      throw new Error(\n        'Edit #' +\n          (i + 1) +\n          ' has an empty `oldText`. Provide a non-empty substring to match.',\n      );\n    }\n\n    var firstIndex = html.indexOf(oldText);\n    if (firstIndex === -1) {\n      throw new Error(\n        'Edit #' +\n          (i + 1) +\n          \": `oldText` was not found in the current HTML. Make sure it is copied EXACTLY (including whitespace and casing) from the current HTML, or fall back to `render_web_app` with the full updated HTML.\",\n      );\n    }\n    var lastIndex = html.lastIndexOf(oldText);\n    if (firstIndex !== lastIndex) {\n      throw new Error(\n        'Edit #' +\n          (i + 1) +\n          \": `oldText` matched more than once in the current HTML. Include more surrounding context so it matches exactly once.\",\n      );\n    }\n\n    html =\n      html.slice(0, firstIndex) + newText + html.slice(firstIndex + oldText.length);\n  }\n\n  return html;\n}\n"
+    }
+  ]
 }
