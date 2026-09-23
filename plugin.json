@@ -145,9 +145,5 @@
       },
       "codeFile": "read-lines.js"
     }
-  ],
-  "previousRunOutputTypes": [
-    "render_html",
-    "html"
   ]
 }
